@@ -47,6 +47,7 @@ fs.rmSync(OUT, { recursive: true, force: true }); fs.mkdirSync(path.join(OUT, 'a
 const asset = (name, ext, body) => { const n = name + '.' + crypto.createHash('md5').update(body).digest('hex').slice(0, 8) + '.' + ext; fs.writeFileSync(path.join(OUT, 'assets', n), body); return n; };
 const CSS = asset('style', 'css', read('style.css'));
 const JS = asset('app', 'js', read('helpers.js') + '\n' + read('runtime.js'));
+const CONSENT_JS = CONSENT ? asset('consent', 'js', read('consent.js')) : '';
 
 /* ---------- layout ---------- */
 function layout({ title, desc, slug, body, ld = [], prefix, noindex, extraHead = '', extraBody = '', cur }) {
@@ -67,15 +68,16 @@ function layout({ title, desc, slug, body, ld = [], prefix, noindex, extraHead =
 <link rel="stylesheet" href="${prefix}assets/${CSS}">${extraHead}
 ${ld.map(o => `<script type="application/ld+json">${jsonSafe(o)}</script>`).join('\n')}
 ${CFG.headScripts || ''}
+${ANALYTICS ? `<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "${ANALYTICS}"}'></script>` : ''}
 </head><body>
 <a class="sr" href="#main">Skip to content</a>
 <header class="site"><div class="wrap"><a class="logo" href="${L('')}" aria-label="${esc(CFG.name)} home"><b>=</b>${esc(CFG.name)}</a><nav class="main" aria-label="Calculator categories">${nav}</nav></div></header>
 <main id="main" class="wrap">${body}</main>
 <footer class="site"><div class="wrap"><div class="cols">${foot}
 <div><h3>Popular</h3>${pop.map(p => `<a href="${L(p.slug)}">${esc(p.title)}</a>`).join('')}</div>
-<div><h3>${esc(CFG.name)}</h3><a href="${L('about')}">About</a><a href="${L('privacy')}">Privacy policy</a><a href="${L('terms')}">Terms of use</a></div></div>
+<div><h3>${esc(CFG.name)}</h3><a href="${L('about')}">About</a><a href="${L('privacy')}">Privacy policy</a><a href="${L('terms')}">Terms of use</a>${ADS ? '<button type="button" class="linkbtn" data-cookie-settings>Cookie settings</button>' : ''}</div></div>
 <p class="fine">© ${new Date().getFullYear()} ${esc(CFG.name)}. Calculators provide estimates for information only and are not financial, medical or legal advice. Results may differ from those of your lender, employer or doctor.</p></div></footer>
-${extraBody}</body></html>`;
+${extraBody}${CONSENT ? `<script>window.__CONSENT__=${jsonSafe({ ads: ADS })};</script><script src="${prefix}assets/${CONSENT_JS}" defer></script>` : ''}</body></html>`;
 }
 
 const card = (p, L) => `<a class="card" href="${L(p.slug)}" data-q="${esc((p.title + ' ' + p.desc).toLowerCase())}"><span class="ic" aria-hidden="true">${p.icon || '🧮'}</span><span class="t">${esc(p.title)}</span><span class="d">${esc(p.desc.length > 92 ? p.desc.slice(0, 89).replace(/\s+\S*$/, '') + '…' : p.desc)}</span></a>`;
@@ -156,10 +158,13 @@ put('404.html', nf);
 const urls = ['', ...pages.map(p => p.slug), ...Object.values(CATS).map(c => c.slug), 'about'];
 put('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map(u => `<url><loc>${canon(u)}</loc><lastmod>${TODAY}</lastmod></url>`).join('\n')}\n</urlset>\n`);
 put('robots.txt', `User-agent: *\nAllow: /\n\nSitemap: ${CFG.url}/sitemap.xml\n`);
+const adsLines = String(CFG.adsTxt || '').split(/\r?\n|\\n/).map(s => s.trim()).filter(Boolean);   // ads.txt only when ADS_TXT_LINES is set
+if (adsLines.length) put('ads.txt', adsLines.join('\n') + '\n');
 put('_headers', `/assets/*\n  Cache-Control: public, max-age=31536000, immutable\n/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n`);
 
 /* ---------- report ---------- */
 let warn = 0;
 for (const p of pages) { const t = (p.title + ' | ' + CFG.name).length; if (t > 62 || p.desc.length > 165 || p.desc.length < 70) { warn++; console.warn(`  ! ${p.slug}: title ${t}, description ${p.desc.length}`); } }
 console.log(`Built ${pages.length} calculator pages (${defs.length} engines + ${pages.length - defs.length} keyword variants), ${Object.keys(CATS).length} category hubs, home, 404, sitemap. ${warn} SEO warnings.`);
+if (ADS || ANALYTICS || adsLines.length) console.log('Monetization: ads ' + (ADS ? 'ON' : 'off') + ', ads.txt ' + (adsLines.length ? adsLines.length + ' line(s)' : 'off') + ', analytics ' + (ANALYTICS ? 'ON' : 'off') + '.');
 if (CFG.url.includes('example.com')) console.log('Note: set SITE_URL (or edit site.config.js) before deploying so canonicals and the sitemap point at your domain.');
