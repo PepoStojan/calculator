@@ -2,6 +2,10 @@
 /* Static site generator. Zero dependencies:  node build.js   (PREVIEW=1 appends index.html to links for file:// browsing) */
 const fs = require('fs'), path = require('path'), crypto = require('crypto');
 const CFG = require('./site.config.js'); CFG.url = CFG.url.replace(/\/$/, '');
+/* Monetization switches (all empty by default = output identical to a plain build). */
+const ADS = CFG.adsClient || '', ANALYTICS = CFG.analyticsToken || '', CONSENT = !!(ADS || ANALYTICS);
+if (ADS && !/^ca-pub-[A-Za-z0-9_-]+$/.test(ADS)) throw new Error('adsClient must look like ca-pub-1234567890123456');
+if (ANALYTICS && !/^[A-Za-z0-9_-]+$/.test(ANALYTICS)) throw new Error('analyticsToken may only contain letters, digits, - and _');
 const SRC = path.join(__dirname, 'src'), OUT = path.join(__dirname, process.env.OUT_DIR || 'dist'), PREVIEW = process.env.PREVIEW === '1';
 const read = f => fs.readFileSync(path.join(SRC, f), 'utf8');
 const kmap = fs.existsSync(path.join(SRC, 'data/keyword-map.json')) ? JSON.parse(read('data/keyword-map.json')) : {};
@@ -29,6 +33,10 @@ const bySlug = Object.fromEntries(pages.map(p => [p.slug, p]));
 if (Object.keys(bySlug).length !== pages.length) throw new Error('Duplicate slug');
 for (const p of pages) for (const r of p.related || []) if (!bySlug[r]) throw new Error(p.slug + ' relates to unknown ' + r);
 const metric = p => (kmap[p.slug] && kmap[p.slug].tp) || 0;
+
+/* Ad slots: calculator pages only, never between the inputs and the results. Renders nothing unless adsClient is set.
+   Each slot reserves its height up front (see .ad-slot in style.css) so a late ad cannot shift the page. */
+const adSlot = n => ADS ? `<div class="ad-slot" data-ad-pos="${n}"><span class="ad-label">Advertisement</span><div class="ad-box"></div></div>` : '';
 
 /* ---------- links (relative, so the site works on any path and from file://) ---------- */
 const mkL = prefix => (slug) => slug === '' ? (PREVIEW ? prefix + 'index.html' : prefix === './' ? './' : prefix) : prefix + slug + '/' + (PREVIEW ? 'index.html' : '');
@@ -94,11 +102,11 @@ function calcPage(p) {
     const fields = JSON.stringify(p.fields).replace(/</g, '\\u003c');
     extraBody = `<script>window.__CALC__={fields:${fields}};window.__COMPUTE__=${p.compute.toString().replace(/<\/script/gi, '<\\/script')};</script><script src="../assets/${JS}" defer></script>`;
   }
-  const body = `${crumbs(items, L)}<h1>${esc(p.h1)}</h1><p class="lede">${esc(p.lede)}</p>${tool}
+  const body = `${crumbs(items, L)}<h1>${esc(p.h1)}</h1><p class="lede">${esc(p.lede)}</p>${tool}${adSlot(1)}
 <article class="content"><h2>${p.variant ? 'How this calculator works' : 'About the ' + esc(p.title.toLowerCase())}</h2>${about}
 ${p.formula ? `<h2>Formula</h2><p><code>${esc(p.formula)}</code></p>` : ''}
-${faqs.length ? `<h2>Frequently asked questions</h2>${faqs.map(f => `<h3>${esc(f[0])}</h3><p>${esc(f[1])}</p>`).join('')}` : ''}
-${p.disclaimer ? `<p class="disc">${esc(p.disclaimer)}</p>` : ''}</article>
+${faqs.length ? adSlot(2) : ''}${faqs.length ? `<h2>Frequently asked questions</h2>${faqs.map(f => `<h3>${esc(f[0])}</h3><p>${esc(f[1])}</p>`).join('')}` : ''}
+${p.disclaimer ? `<p class="disc">${esc(p.disclaimer)}</p>` : ''}</article>${adSlot(3)}
 <section aria-labelledby="rel"><h2 id="rel">Related calculators</h2><div class="grid">${relatedFor(p).map(x => card(x, L)).join('')}</div></section>`;
   const ld = [{ '@context': 'https://schema.org', '@type': 'WebApplication', name: p.title, url: canon(p.slug), description: p.desc, applicationCategory: c.app, operatingSystem: 'Any', browserRequirements: 'Requires JavaScript', offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' } },
     { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: items.map((i, k) => ({ '@type': 'ListItem', position: k + 1, name: i.name, item: canon(i.slug) })) }];
