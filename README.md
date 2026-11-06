@@ -55,6 +55,32 @@ Run `npm test`, then `node build.js`. Field types: `number`, `select`, `date` (d
 `show: { id: 'mode', in: ['a','b'] }` hides a field unless another field has one of those values.
 Add a `variants` array to target extra search phrases with the same engine (see `loan-calculator` → `personal-loan-calculator`).
 
+## Monetization
+
+Everything here is **off by default**. With nothing set, the build output has no ad slots, no consent script, no `ads.txt` and no analytics, so the live pages are unchanged. Turn features on with environment variables (in Cloudflare Pages: Settings, Variables and Secrets, Production), then redeploy.
+
+| Variable | What it does |
+|---|---|
+| `ADS_CLIENT` | Ad publisher ID, e.g. `ca-pub-1234567890123456`. Enables the ad slots, the consent banner and the footer "Cookie settings" link. |
+| `ADS_TXT_LINES` | Lines for `/ads.txt`, separated by newlines. Empty means no `ads.txt` file is written. |
+| `CF_ANALYTICS_TOKEN` | Cloudflare Web Analytics token. Adds the cookieless beacon to every page. |
+
+**Ad slots.** With `ADS_CLIENT` set, up to three slots appear on calculator pages only: after the tool and results table, after the About and formula section (only when the page has FAQs), and before "Related calculators". Each has an "Advertisement" label and a reserved height (250px on mobile, 280px on desktop) so the page does not jump when an ad loads. There are never ads above the tool, between the inputs and the results, or on the home, hub, 404, about, privacy and terms pages. AdSense ad units normally also need a `data-ad-slot` ID from your AdSense account: `src/consent.js` creates the `<ins>` elements, so add the ID there when you have one.
+
+**Consent.** `src/consent.js` shows a small Accept / Decline banner and stores the choice in `localStorage`. The ad script is injected only after Accept; Decline hides the slots; the footer "Cookie settings" link reopens the banner. With only analytics configured the banner stays hidden, because Cloudflare Web Analytics sets no cookies. **This banner is a basic gate, not a legal guarantee.** Visitors from the EEA and UK who see AdSense ads require a Google-certified consent management platform (CMP) that supports the IAB TCF. Install one before serving ads to those regions, and have the privacy policy reviewed.
+
+**Privacy policy.** When ads, analytics or any affiliate link is configured, `/privacy/` gets extra paragraphs describing them. Without them the text is unchanged.
+
+**Affiliate box.** Add an optional `affiliate` property to any calculator definition in `src/calcs/*.js` (keyword variants inherit it):
+
+```js
+affiliate: { title: 'Product or service name', text: 'One honest sentence on why it helps with this calculation.', url: 'https://example-partner.com/?ref=you', cta: 'See the offer' }
+```
+
+It renders a "Recommended" box after the results with `rel="sponsored nofollow noopener"` and the line "We may earn a commission if you use this link." `url` must start with `https://` or the build fails. No affiliate entries ship in the repo.
+
+To check the generated output, run `node test-build.js` (it builds with the features off and on and asserts the rules above).
+
 ## Honest SEO notes
 
 * **Variant pages share the base article.** Each has its own title, H1, intro, meta description and an FAQ, which is a fair start, but give your best-performing variants unique copy, examples and screenshots over time. Thin, near-duplicate pages are what programmatic SEO gets penalized for.
