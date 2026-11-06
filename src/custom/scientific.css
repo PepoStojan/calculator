@@ -1,0 +1,16 @@
+.sci{max-width:430px;margin:0 auto;padding:16px;border-radius:18px;background:linear-gradient(180deg,#2b2f36,#1b1e23);box-shadow:0 18px 40px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.12);color:#eee}
+.sci-top{background:#0b1a14;border-radius:10px;padding:10px 14px;box-shadow:inset 0 2px 8px #000;margin-bottom:14px}
+.sci-in{width:100%;background:transparent;border:0;outline:0;color:#9ff0cf;font:500 20px/1.3 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;padding:4px 0}
+.sci-out{display:block;text-align:right;color:#7dffd0;text-shadow:0 0 8px rgba(125,255,208,.6);font:600 34px/1.2 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sci-out.err{color:#ff9a8a;text-shadow:none;font-size:22px}
+.sci-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.sci-grid button{min-height:46px;border:0;border-radius:9px;font:600 16px/1 system-ui,sans-serif;color:#f1f1f1;background:linear-gradient(#4a505a,#383d45);box-shadow:0 3px 0 #1a1c20,inset 0 1px 0 rgba(255,255,255,.15);cursor:pointer;touch-action:manipulation}
+.sci-grid button:active{transform:translateY(2px);box-shadow:0 1px 0 #1a1c20}
+.sci-grid button.n{background:linear-gradient(#6a707b,#555a64)}
+.sci-grid button.o{background:linear-gradient(#e07b34,#b85a1d)}
+.sci-grid button.c{background:linear-gradient(#c9564a,#9c372d)}
+.sci-grid button.eq{background:linear-gradient(#5fae6a,#3f8149)}
+.sci-grid button.on{background:linear-gradient(#2f7a6a,#1f5a4d)}
+.sci-hist{margin-top:12px;font:14px/1.5 ui-monospace,Menlo,Consolas,monospace;color:#b8c0c8;max-height:110px;overflow:auto}
+.sci-hist div{display:flex;justify-content:space-between;gap:12px;border-top:1px solid rgba(255,255,255,.08);padding:3px 0;cursor:pointer}
+.sci-hist span:last-child{color:#7dffd0}

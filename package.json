@@ -1,0 +1,12 @@
+{
+  "name": "calchub",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static calculator website generator (no dependencies)",
+  "scripts": {
+    "build": "node build.js",
+    "preview": "PREVIEW=1 OUT_DIR=preview node build.js && echo 'Open preview/index.html in your browser'",
+    "test": "node test.js"
+  },
+  "engines": { "node": ">=18" }
+}

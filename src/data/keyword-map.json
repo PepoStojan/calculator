@@ -1,0 +1,359 @@
+{
+ "mortgage-calculator": {
+  "q": "mortgage calculator",
+  "vol": 2220000,
+  "kd": 80,
+  "tp": 816000,
+  "cpc": 0.15
+ },
+ "loan-calculator": {
+  "q": "loan calculator",
+  "vol": 694000,
+  "kd": 72,
+  "tp": 562000,
+  "cpc": 0.2
+ },
+ "personal-loan-calculator": {
+  "q": "personal loan calculator",
+  "vol": 50000,
+  "kd": 45,
+  "tp": 42000,
+  "cpc": 0.7
+ },
+ "auto-loan-calculator": {
+  "q": "auto loan calculator",
+  "vol": 431000,
+  "kd": 67,
+  "tp": 344000,
+  "cpc": 0.15
+ },
+ "car-payment-calculator": {
+  "q": "car payment calculator",
+  "vol": 384000,
+  "kd": 59,
+  "tp": 336000,
+  "cpc": 0.2
+ },
+ "car-loan-calculator": {
+  "q": "car loan calculator",
+  "vol": 421000,
+  "kd": 57,
+  "tp": 335000,
+  "cpc": 0.15
+ },
+ "compound-interest-calculator": {
+  "q": "compound interest calculator",
+  "vol": 813000,
+  "kd": 76,
+  "tp": 181000,
+  "cpc": 0.04
+ },
+ "investment-calculator": {
+  "q": "investment calculator",
+  "vol": 329000,
+  "kd": 66,
+  "tp": 125000,
+  "cpc": 0.1
+ },
+ "savings-calculator": {
+  "q": "savings calculator",
+  "vol": 56000,
+  "kd": 45,
+  "tp": 113000,
+  "cpc": 1.3
+ },
+ "retirement-calculator": {
+  "q": "retirement calculator",
+  "vol": 614000,
+  "kd": 72,
+  "tp": 36000,
+  "cpc": 0.8
+ },
+ "salary-to-hourly-calculator": {
+  "q": "salary to hourly calculator",
+  "vol": 39000,
+  "kd": 34,
+  "tp": 26000,
+  "cpc": 0.25
+ },
+ "hourly-to-salary-calculator": {
+  "q": "hourly to salary calculator",
+  "vol": 31000,
+  "kd": 54,
+  "tp": 41000,
+  "cpc": 0.35
+ },
+ "tip-calculator": {
+  "q": "tip calculator",
+  "vol": 432000,
+  "kd": 35,
+  "tp": 58000,
+  "cpc": 0.45
+ },
+ "bmi-calculator": {
+  "q": "bmi calculator",
+  "vol": 2180000,
+  "kd": 76,
+  "tp": 1140000,
+  "cpc": 0.01
+ },
+ "calorie-calculator": {
+  "q": "calorie calculator",
+  "vol": 964000,
+  "kd": 51,
+  "tp": 496000,
+  "cpc": 0.45
+ },
+ "tdee-calculator": {
+  "q": "tdee calculator",
+  "vol": 377000,
+  "kd": 61,
+  "tp": 84000,
+  "cpc": 0.08
+ },
+ "maintenance-calorie-calculator": {
+  "q": "maintenance calorie calculator",
+  "vol": 76000,
+  "kd": 75,
+  "tp": 404000,
+  "cpc": 0.01
+ },
+ "calorie-deficit-calculator": {
+  "q": "calorie deficit calculator",
+  "vol": 248000,
+  "kd": 69,
+  "tp": 496000,
+  "cpc": 0.07
+ },
+ "macro-calculator": {
+  "q": "macro calculator",
+  "vol": 64000,
+  "kd": 9,
+  "tp": 51000,
+  "cpc": 0.07
+ },
+ "due-date-calculator": {
+  "q": "due date calculator",
+  "vol": 209000,
+  "kd": 56,
+  "tp": 168000,
+  "cpc": 0.04
+ },
+ "ovulation-calculator": {
+  "q": "ovulation calculator",
+  "vol": 189000,
+  "kd": 36,
+  "tp": 135000,
+  "cpc": 1.1
+ },
+ "one-rep-max-calculator": {
+  "q": "one rep max calculator",
+  "vol": 47000,
+  "kd": 62,
+  "tp": 63000,
+  "cpc": 0.3
+ },
+ "grade-calculator": {
+  "q": "grade calculator",
+  "vol": 720000,
+  "kd": 66,
+  "tp": 673000,
+  "cpc": null
+ },
+ "weighted-grade-calculator": {
+  "q": "weighted grade calculator",
+  "vol": 18000,
+  "kd": 11,
+  "tp": 673000,
+  "cpc": null
+ },
+ "final-grade-calculator": {
+  "q": "final grade calculator",
+  "vol": 322000,
+  "kd": 10,
+  "tp": 378000,
+  "cpc": null
+ },
+ "gpa-calculator": {
+  "q": "gpa calculator",
+  "vol": 497000,
+  "kd": 49,
+  "tp": 121000,
+  "cpc": 0.09
+ },
+ "high-school-gpa-calculator": {
+  "q": "high school gpa calculator",
+  "vol": 14000,
+  "kd": 6,
+  "tp": 23000,
+  "cpc": null
+ },
+ "percentage-calculator": {
+  "q": "percentage calculator",
+  "vol": 593000,
+  "kd": 35,
+  "tp": 501000,
+  "cpc": 0.25
+ },
+ "percent-change-calculator": {
+  "q": "percent change calculator",
+  "vol": 48000,
+  "kd": 48,
+  "tp": 52000,
+  "cpc": 0.01
+ },
+ "percentage-increase-calculator": {
+  "q": "percentage increase calculator",
+  "vol": 44000,
+  "kd": 53,
+  "tp": 26000,
+  "cpc": 0.01
+ },
+ "fraction-calculator": {
+  "q": "fraction calculator",
+  "vol": 365000,
+  "kd": 32,
+  "tp": 157000,
+  "cpc": 0.35
+ },
+ "lcm-calculator": {
+  "q": "lcm calculator",
+  "vol": 180000,
+  "kd": 4,
+  "tp": 120000,
+  "cpc": 0.06
+ },
+ "gcf-calculator": {
+  "q": "gcf calculator",
+  "vol": 90000,
+  "kd": 8,
+  "tp": 66000,
+  "cpc": 1.1
+ },
+ "area-calculator": {
+  "q": "area calculator",
+  "vol": 217000,
+  "kd": 43,
+  "tp": 161000,
+  "cpc": 0.45
+ },
+ "square-footage-calculator": {
+  "q": "square footage calculator",
+  "vol": 49000,
+  "kd": 35,
+  "tp": 70000,
+  "cpc": 0.01
+ },
+ "volume-calculator": {
+  "q": "volume calculator",
+  "vol": 285000,
+  "kd": 22,
+  "tp": 161000,
+  "cpc": 0.15
+ },
+ "ratio-calculator": {
+  "q": "ratio calculator",
+  "vol": 330000,
+  "kd": 46,
+  "tp": 172000,
+  "cpc": 0.4
+ },
+ "average-calculator": {
+  "q": "average calculator",
+  "vol": 58000,
+  "kd": 24,
+  "tp": 46000,
+  "cpc": 3.5
+ },
+ "standard-deviation-calculator": {
+  "q": "standard deviation calculator",
+  "vol": 40000,
+  "kd": 15,
+  "tp": 53000,
+  "cpc": 0.15
+ },
+ "statistics-calculator": {
+  "q": "statistics calculator",
+  "vol": 249000,
+  "kd": 45,
+  "tp": 43000,
+  "cpc": 0.35
+ },
+ "age-calculator": {
+  "q": "age calculator",
+  "vol": 385000,
+  "kd": 25,
+  "tp": 455000,
+  "cpc": 0.01
+ },
+ "date-difference-calculator": {
+  "q": "days between dates calculator",
+  "vol": 4800,
+  "kd": 46,
+  "tp": 336000,
+  "cpc": 0.01
+ },
+ "date-calculator": {
+  "q": "date calculator",
+  "vol": 186000,
+  "kd": 45,
+  "tp": 183000,
+  "cpc": 0.01
+ },
+ "time-clock-calculator": {
+  "q": "time clock calculator",
+  "vol": 91000,
+  "kd": 35,
+  "tp": 211000,
+  "cpc": 1.0
+ },
+ "work-hours-calculator": {
+  "q": "work hours calculator",
+  "vol": 35000,
+  "kd": 35,
+  "tp": 83000,
+  "cpc": 0.6
+ },
+ "hours-calculator": {
+  "q": "hour calculator",
+  "vol": 47000,
+  "kd": 34,
+  "tp": 60000,
+  "cpc": 0.7
+ },
+ "concrete-calculator": {
+  "q": "concrete calculator",
+  "vol": 230000,
+  "kd": 50,
+  "tp": 64000,
+  "cpc": 0.07
+ },
+ "sleep-calculator": {
+  "q": "sleep calculator",
+  "vol": 64000,
+  "kd": 63,
+  "tp": 46000,
+  "cpc": 0.4
+ },
+ "scientific-calculator": {
+  "q": "scientific calculator",
+  "vol": 738000,
+  "kd": 40,
+  "tp": 1370000,
+  "cpc": 0.15
+ },
+ "calculator": {
+  "q": "calculator",
+  "vol": 20970000,
+  "kd": 83,
+  "tp": 1570000,
+  "cpc": 0.25
+ },
+ "online-calculator": {
+  "q": "online calculator",
+  "vol": 292000,
+  "kd": 79,
+  "tp": 31000,
+  "cpc": 0.25
+ }
+}
