@@ -36,6 +36,10 @@ const metric = p => (kmap[p.slug] && kmap[p.slug].tp) || 0;
 
 /* Ad slots: calculator pages only, never between the inputs and the results. Renders nothing unless adsClient is set.
    Each slot reserves its height up front (see .ad-slot in style.css) so a late ad cannot shift the page. */
+for (const p of pages) if (p.affiliate) { const a = p.affiliate; if (!a.title || !a.text || !a.cta || !/^https:\/\//.test(a.url || '')) throw new Error(p.slug + ': affiliate needs title, text, cta and an https:// url'); }
+const AFF = pages.some(p => p.affiliate);
+/* Optional affiliate box (calculator definition property `affiliate: { title, text, url, cta }`). Nothing renders without it. */
+const affiliateBox = a => a ? `<aside class="aff"><p class="aff-k">Recommended</p><h3>${esc(a.title)}</h3><p>${esc(a.text)}</p><a class="aff-btn" href="${esc(a.url)}" rel="sponsored nofollow noopener" target="_blank">${esc(a.cta)}</a><p class="aff-d">We may earn a commission if you use this link.</p></aside>` : '';
 const adSlot = n => ADS ? `<div class="ad-slot" data-ad-pos="${n}"><span class="ad-label">Advertisement</span><div class="ad-box"></div></div>` : '';
 
 /* ---------- links (relative, so the site works on any path and from file://) ---------- */
@@ -104,7 +108,7 @@ function calcPage(p) {
     const fields = JSON.stringify(p.fields).replace(/</g, '\\u003c');
     extraBody = `<script>window.__CALC__={fields:${fields}};window.__COMPUTE__=${p.compute.toString().replace(/<\/script/gi, '<\\/script')};</script><script src="../assets/${JS}" defer></script>`;
   }
-  const body = `${crumbs(items, L)}<h1>${esc(p.h1)}</h1><p class="lede">${esc(p.lede)}</p>${tool}${adSlot(1)}
+  const body = `${crumbs(items, L)}<h1>${esc(p.h1)}</h1><p class="lede">${esc(p.lede)}</p>${tool}${affiliateBox(p.affiliate)}${adSlot(1)}
 <article class="content"><h2>${p.variant ? 'How this calculator works' : 'About the ' + esc(p.title.toLowerCase())}</h2>${about}
 ${p.formula ? `<h2>Formula</h2><p><code>${esc(p.formula)}</code></p>` : ''}
 ${faqs.length ? adSlot(2) : ''}${faqs.length ? `<h2>Frequently asked questions</h2>${faqs.map(f => `<h3>${esc(f[0])}</h3><p>${esc(f[1])}</p>`).join('')}` : ''}
@@ -137,9 +141,15 @@ function hubPage(k) {
   const ld = [{ '@context': 'https://schema.org', '@type': 'CollectionPage', name: c.h1, url: canon(c.slug) }, { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: items.map((i, n) => ({ '@type': 'ListItem', position: n + 1, name: i.name, item: canon(i.slug) })) }];
   return layout({ title: `${c.h1} | ${CFG.name}`, desc: c.desc, slug: c.slug, body, ld, prefix: '../', cur: k });
 }
+/* Extra privacy-policy paragraphs, added only for the features that are actually switched on. */
+const PRIVACY_EXTRA = [
+  ADS && `<h2>Advertising</h2><p>We show ads provided by Google AdSense, a third-party advertising service. Google and its partners may use cookies and similar technologies to show and measure ads, including ads based on your visits to this and other websites. Ads are loaded only if you click “Accept” in our cookie banner. You can change your choice at any time with the “Cookie settings” link in the footer; we remember it in your browser’s local storage. You can learn more about how Google uses data at <a href="https://policies.google.com/technologies/ads" rel="noopener">policies.google.com/technologies/ads</a> and manage personalised ads at <a href="https://adssettings.google.com" rel="noopener">adssettings.google.com</a>.</p>`,
+  ANALYTICS && `<h2>Analytics</h2><p>We use Cloudflare Web Analytics to understand how many people visit the site and which pages they view. It does not use cookies and does not track you across websites. It records aggregate information such as page views, referrers, country, browser type and page-load performance.</p>`,
+  AFF && `<h2>Affiliate links</h2><p>Some pages contain affiliate links, which are labelled “Recommended”. If you follow one and sign up or buy, we may earn a commission at no extra cost to you. We only recommend products we consider relevant to the calculator on the page.</p>`
+].filter(Boolean).join('');
 const STATIC = {
   about: ['About', `<p>${esc(CFG.name)} offers free online calculators for money, health, school and everyday tasks. Every calculator runs in your browser, so the numbers you type stay on your device.</p><p>We aim to make each tool accurate and to explain the formula behind it. Calculators give estimates only. Lenders, employers, schools and doctors may use different rules, so confirm important figures with a professional.</p><p>Found a mistake or want a calculator added? Email <a href="mailto:${esc(CFG.contactEmail)}">${esc(CFG.contactEmail)}</a>.</p>`],
-  privacy: ['Privacy Policy', `<p>The values you enter into our calculators are processed locally in your browser and are not sent to our servers.</p><p>Like most sites, our hosting provider may keep standard server logs (such as IP address and pages requested) for security and reliability. If we add analytics or advertising, they may use cookies or similar technologies; we will describe them here and, where required, ask for your consent.</p><p>Questions about privacy? Contact <a href="mailto:${esc(CFG.contactEmail)}">${esc(CFG.contactEmail)}</a>.</p>`],
+  privacy: ['Privacy Policy', `<p>The values you enter into our calculators are processed locally in your browser and are not sent to our servers.</p><p>Like most sites, our hosting provider may keep standard server logs (such as IP address and pages requested) for security and reliability. If we add analytics or advertising, they may use cookies or similar technologies; we will describe them here and, where required, ask for your consent.</p>${PRIVACY_EXTRA}<p>Questions about privacy? Contact <a href="mailto:${esc(CFG.contactEmail)}">${esc(CFG.contactEmail)}</a>.</p>`],
   terms: ['Terms of Use', `<p>${esc(CFG.name)} is provided “as is” for general information. Results are estimates and are not financial, tax, legal or medical advice. You are responsible for decisions you make using the calculators.</p><p>We do our best to keep calculations accurate but make no guarantee that they are error-free or suitable for your situation. To the extent permitted by law, ${esc(CFG.name)} is not liable for losses arising from use of the site.</p>`]
 };
 function staticPage(slug) {
