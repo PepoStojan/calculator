@@ -5,5 +5,5 @@ module.exports = {
   url: process.env.SITE_URL || 'https://www.example.com',   // no trailing slash
   contactEmail: 'contact@online-calculator.live',
   // Paste your analytics / AdSense <script> tag here; it is added to every page's <head>.
-  headScripts: ''
+  headScripts: '<meta name="google-site-verification" content="kLUQITp8T_PWLmDvQmsMRJQwiXZnIfol1EyBuFXNJMo" />'
 };
