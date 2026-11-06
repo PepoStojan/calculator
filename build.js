@@ -71,8 +71,7 @@ function layout({ title, desc, slug, body, ld = [], prefix, noindex, extraHead =
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f766e'/%3E%3Ctext x='16' y='23' font-size='20' text-anchor='middle' fill='white' font-family='Arial' font-weight='700'%3E%3D%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="${prefix}assets/${CSS}">${extraHead}
 ${ld.map(o => `<script type="application/ld+json">${jsonSafe(o)}</script>`).join('\n')}
-${CFG.headScripts || ''}
-${ANALYTICS ? `<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "${ANALYTICS}"}'></script>` : ''}
+${CFG.headScripts || ''}${ANALYTICS ?`<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "${ANALYTICS}"}'></script>` : ''}
 </head><body>
 <a class="sr" href="#main">Skip to content</a>
 <header class="site"><div class="wrap"><a class="logo" href="${L('')}" aria-label="${esc(CFG.name)} home"><b>=</b>${esc(CFG.name)}</a><nav class="main" aria-label="Calculator categories">${nav}</nav></div></header>
