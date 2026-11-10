@@ -68,7 +68,7 @@ function layout({ title, desc, slug, body, ld = [], prefix, noindex, extraHead =
 <link rel="canonical" href="${url}">
 <meta property="og:type" content="website"><meta property="og:site_name" content="${esc(CFG.name)}"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}"><meta property="og:url" content="${url}">
 <meta name="twitter:card" content="summary"><meta name="theme-color" content="#0f766e">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f766e'/%3E%3Ctext x='16' y='23' font-size='20' text-anchor='middle' fill='white' font-family='Arial' font-weight='700'%3E%3D%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="/favicon.ico" sizes="48x48"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="${prefix}assets/${CSS}">${extraHead}
 ${ld.map(o => `<script type="application/ld+json">${jsonSafe(o)}</script>`).join('\n')}
 ${CFG.headScripts || ''}${ANALYTICS ?`<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "${ANALYTICS}"}'></script>` : ''}
@@ -157,6 +157,24 @@ function staticPage(slug) {
 }
 
 /* ---------- write everything ---------- */
+
+/* ---------- favicon files (svg, ico, apple-touch png) ---------- */
+const zlib = require('zlib');
+const crcT = Array.from({ length: 256 }, (_, n) => { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; return c >>> 0; });
+const crc32 = b => { let c = 0xffffffff; for (const x of b) c = crcT[(c ^ x) & 255] ^ (c >>> 8); return (c ^ 0xffffffff) >>> 0; };
+const pngChunk = (t, d) => { const l = Buffer.alloc(4); l.writeUInt32BE(d.length); const td = Buffer.concat([Buffer.from(t), d]); const c = Buffer.alloc(4); c.writeUInt32BE(crc32(td)); return Buffer.concat([l, td, c]); };
+const iconPng = size => {   // teal rounded square with a white "=", 4x4 supersampled
+  const S = 4, raw = Buffer.alloc((size * 4 + 1) * size), u = size / 32;
+  const inRR = (x, y, x0, y0, x1, y1, r) => x >= x0 && x <= x1 && y >= y0 && y <= y1 && !((x < x0 + r || x > x1 - r) && (y < y0 + r || y > y1 - r) && Math.hypot(x - (x < x0 + r ? x0 + r : x1 - r), y - (y < y0 + r ? y0 + r : y1 - r)) > r);
+  for (let py = 0; py < size; py++) { raw[py * (size * 4 + 1)] = 0; for (let px = 0; px < size; px++) {
+    let bg = 0, fg = 0;
+    for (let sy = 0; sy < S; sy++) for (let sx = 0; sx < S; sx++) { const x = (px + (sx + .5) / S) / u, y = (py + (sy + .5) / S) / u;
+      if (inRR(x, y, 0, 0, 32, 32, 8)) { bg++; if (inRR(x, y, 8, 10, 24, 14.5, 1) || inRR(x, y, 8, 17.5, 24, 22, 1)) fg++; } }
+    const n = S * S, o = py * (size * 4 + 1) + 1 + px * 4, a = bg / n, w = bg ? fg / bg : 0;
+    raw[o] = Math.round(15 + (255 - 15) * w); raw[o + 1] = Math.round(118 + (255 - 118) * w); raw[o + 2] = Math.round(110 + (255 - 110) * w); raw[o + 3] = Math.round(a * 255); } }
+  const ihdr = Buffer.alloc(13); ihdr.writeUInt32BE(size, 0); ihdr.writeUInt32BE(size, 4); ihdr[8] = 8; ihdr[9] = 6;
+  return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), pngChunk('IHDR', ihdr), pngChunk('IDAT', zlib.deflateSync(raw)), pngChunk('IEND', Buffer.alloc(0))]);
+};
 const put = (rel, html) => { const f = path.join(OUT, rel); fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, html); };
 put('index.html', homePage());
 for (const p of pages) put(p.slug + '/index.html', calcPage(p));
@@ -169,6 +187,9 @@ put('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http:
 put('robots.txt', `User-agent: *\nAllow: /\n\nSitemap: ${CFG.url}/sitemap.xml\n`);
 const adsLines = String(CFG.adsTxt || '').split(/\r?\n|\\n/).map(s => s.trim()).filter(Boolean);   // ads.txt only when ADS_TXT_LINES is set
 if (adsLines.length) put('ads.txt', adsLines.join('\n') + '\n');
+put('favicon.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#0f766e"/><rect x="8" y="10" width="16" height="4.5" rx="1" fill="#fff"/><rect x="8" y="17.5" width="16" height="4.5" rx="1" fill="#fff"/></svg>\n`);
+{ const p48 = iconPng(48), h = Buffer.alloc(22); h.writeUInt16LE(1, 2); h.writeUInt16LE(1, 4); h[6] = 48; h[7] = 48; h.writeUInt16LE(1, 10); h.writeUInt16LE(32, 12); h.writeUInt32LE(p48.length, 14); h.writeUInt32LE(22, 18); put('favicon.ico', Buffer.concat([h, p48])); }
+put('apple-touch-icon.png', iconPng(180));
 put('_headers', `/assets/*\n  Cache-Control: public, max-age=31536000, immutable\n/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n`);
 
 /* ---------- report ---------- */
